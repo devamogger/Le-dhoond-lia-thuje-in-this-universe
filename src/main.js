@@ -1,27 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-/*
-=========================================================
-OUR UNIVERSE
-STAGE 8 — LIVING UNIVERSE
-
-Major systems:
-- Devam + Arsh golden stars
-- Cyan memory stars
-- Bluish background universe
-- More realistic star textures
-- Memory importance
-- Orbital memory motion
-- Time evolution
-- Timeline scrubbing
-- Future probability memories
-- Clickable main stars
-- Clickable memory stars
-- Short cinematic camera focus
-- Free OrbitControls
-=========================================================
-*/
+/* =========================================================
+   OUR UNIVERSE
+   Main Universe Renderer
+   ========================================================= */
 
 
 /* =========================================================
@@ -41,15 +24,14 @@ scene.background =
 const camera =
     new THREE.PerspectiveCamera(
         60,
-        window.innerWidth /
-        window.innerHeight,
+        window.innerWidth / window.innerHeight,
         0.1,
-        250
+        200
     );
 
 camera.position.set(
     0,
-    2,
+    1.8,
     8
 );
 
@@ -74,6 +56,7 @@ renderer.setSize(
 document.body.style.margin = '0';
 document.body.style.padding = '0';
 document.body.style.overflow = 'hidden';
+
 document.body.style.background =
     '#02070d';
 
@@ -83,7 +66,7 @@ document.body.appendChild(
 
 
 /* =========================================================
-   4. CONTROLS
+   4. ORBIT CONTROLS
    ========================================================= */
 
 const controls =
@@ -93,14 +76,22 @@ const controls =
     );
 
 controls.enableDamping = true;
-controls.dampingFactor = 0.06;
+
+controls.dampingFactor =
+    0.06;
 
 controls.minDistance = 2;
-controls.maxDistance = 90;
 
-controls.rotateSpeed = 0.55;
-controls.zoomSpeed = 0.8;
-controls.panSpeed = 0.7;
+controls.maxDistance = 80;
+
+controls.rotateSpeed =
+    0.55;
+
+controls.zoomSpeed =
+    0.8;
+
+controls.panSpeed =
+    0.7;
 
 controls.enablePan = true;
 
@@ -126,204 +117,12 @@ scene.add(
 
 
 /* =========================================================
-   6. REALISTIC STAR TEXTURE GENERATOR
-   =========================================================
-
-   These textures are generated locally using Canvas.
-
-   This gives the stars:
-   - bright hot core
-   - gradual atmospheric glow
-   - irregular light falloff
-   - softer edges
-
-   No external image assets are required.
-========================================================= */
-
-function createStarTexture(
-    coreColor,
-    glowColor
-) {
-
-    const canvas =
-        document.createElement(
-            'canvas'
-        );
-
-    canvas.width = 128;
-    canvas.height = 128;
-
-    const ctx =
-        canvas.getContext(
-            '2d'
-        );
-
-    const gradient =
-        ctx.createRadialGradient(
-            64,
-            64,
-            1,
-            64,
-            64,
-            64
-        );
-
-    gradient.addColorStop(
-        0,
-        coreColor
-    );
-
-    gradient.addColorStop(
-        0.05,
-        coreColor
-    );
-
-    gradient.addColorStop(
-        0.12,
-        'rgba(255,255,255,0.98)'
-    );
-
-    gradient.addColorStop(
-        0.25,
-        glowColor
-    );
-
-    gradient.addColorStop(
-        0.50,
-        glowColor
-    );
-
-    gradient.addColorStop(
-        0.72,
-        'rgba(100,220,255,0.08)'
-    );
-
-    gradient.addColorStop(
-        1,
-        'rgba(0,0,0,0)'
-    );
-
-    ctx.fillStyle =
-        gradient;
-
-    ctx.fillRect(
-        0,
-        0,
-        128,
-        128
-    );
-
-
-    /*
-       Tiny diffraction-like rays.
-       Very subtle so it still looks like a star,
-       not a lens flare.
-    */
-
-    const rayGradient =
-        ctx.createLinearGradient(
-            0,
-            64,
-            128,
-            64
-        );
-
-    rayGradient.addColorStop(
-        0,
-        'rgba(255,255,255,0)'
-    );
-
-    rayGradient.addColorStop(
-        0.5,
-        'rgba(255,255,255,0.30)'
-    );
-
-    rayGradient.addColorStop(
-        1,
-        'rgba(255,255,255,0)'
-    );
-
-    ctx.fillStyle =
-        rayGradient;
-
-    ctx.fillRect(
-        8,
-        62,
-        112,
-        4
-    );
-
-
-    const verticalGradient =
-        ctx.createLinearGradient(
-            64,
-            0,
-            64,
-            128
-        );
-
-    verticalGradient.addColorStop(
-        0,
-        'rgba(255,255,255,0)'
-    );
-
-    verticalGradient.addColorStop(
-        0.5,
-        'rgba(255,255,255,0.18)'
-    );
-
-    verticalGradient.addColorStop(
-        1,
-        'rgba(255,255,255,0)'
-    );
-
-    ctx.fillStyle =
-        verticalGradient;
-
-    ctx.fillRect(
-        62,
-        8,
-        4,
-        112
-    );
-
-
-    const texture =
-        new THREE.CanvasTexture(
-            canvas
-        );
-
-    texture.needsUpdate =
-        true;
-
-    return texture;
-}
-
-
-/* =========================================================
-   7. STAR TEXTURES
+   6. BACKGROUND UNIVERSE
+   Soft light-blue theme.
+   These stars are decorative and NOT clickable.
    ========================================================= */
 
-const goldenStarTexture =
-    createStarTexture(
-        'rgba(255,255,225,1)',
-        'rgba(255,210,70,0.55)'
-    );
-
-
-const cyanStarTexture =
-    createStarTexture(
-        'rgba(255,255,255,1)',
-        'rgba(80,220,255,0.52)'
-    );
-
-
-/* =========================================================
-   8. BACKGROUND UNIVERSE
-   ========================================================= */
-
-const backgroundStarCount =
-    450;
+const backgroundStarCount = 420;
 
 const backgroundPositions =
     new Float32Array(
@@ -336,17 +135,16 @@ for (
     i++
 ) {
 
-    const i3 =
-        i * 3;
+    const i3 = i * 3;
 
     backgroundPositions[i3] =
-        (Math.random() - 0.5) * 80;
+        (Math.random() - 0.5) * 75;
 
     backgroundPositions[i3 + 1] =
-        (Math.random() - 0.5) * 58;
+        (Math.random() - 0.5) * 55;
 
     backgroundPositions[i3 + 2] =
-        (Math.random() - 0.5) * 80;
+        (Math.random() - 0.5) * 75;
 }
 
 
@@ -367,11 +165,11 @@ const backgroundMaterial =
 
         color: 0x8fc9df,
 
-        size: 0.075,
+        size: 0.09,
 
         transparent: true,
 
-        opacity: 0.70,
+        opacity: 0.72,
 
         depthWrite: false,
 
@@ -392,7 +190,8 @@ scene.add(
 
 
 /* =========================================================
-   9. SUBTLE BLUE COSMIC ATMOSPHERE
+   7. SUBTLE BLUE UNIVERSE HAZE
+   Very lightweight transparent spheres.
    ========================================================= */
 
 const hazeGeometry =
@@ -402,11 +201,10 @@ const hazeGeometry =
         16
     );
 
-
 const hazeMaterial =
     new THREE.MeshBasicMaterial({
 
-        color: 0x16435a,
+        color: 0x163b50,
 
         transparent: true,
 
@@ -416,7 +214,6 @@ const hazeMaterial =
 
     });
 
-
 const universeHaze =
     new THREE.Mesh(
         hazeGeometry,
@@ -424,9 +221,9 @@ const universeHaze =
     );
 
 universeHaze.scale.set(
-    28,
-    19,
-    28
+    25,
+    18,
+    25
 );
 
 scene.add(
@@ -435,26 +232,14 @@ scene.add(
 
 
 /* =========================================================
-   10. MEMORY DATA
-   =========================================================
-
-   timeline:
-   0   = 30 May
-   25  = 26 June
-   55  = 27 July
-   60  = 28 July
-   75  = 10 August
-   100 = future
-========================================================= */
+   8. ACTUAL MEMORY DATA
+   ========================================================= */
 
 const starData = [
 
     {
         title: 'The First Message',
         date: '30 May 2026',
-        timeline: 0,
-        importance: 1.0,
-        orbit: false,
         text:
             'The beginning. Arsh sent Devam a request on Instagram, expecting him to be a guy from another section.'
     },
@@ -462,12 +247,6 @@ const starData = [
     {
         title: 'The Long Night',
         date: '30 → 31 May 2026',
-        timeline: 3,
-        importance: 1.15,
-        orbit: true,
-        orbitRadius: 3.0,
-        orbitSpeed: 0.10,
-        orbitPhase: 0.2,
         text:
             'One conversation turned into an entire night of talking, continuing until around 3 PM.'
     },
@@ -475,12 +254,6 @@ const starData = [
     {
         title: 'Two Minds',
         date: 'Those First Days',
-        timeline: 7,
-        importance: 1.0,
-        orbit: true,
-        orbitRadius: 3.5,
-        orbitSpeed: 0.08,
-        orbitPhase: 1.4,
         text:
             'Religion, books, cities, problems, futures, goals, music and pasts. The conversations kept becoming deeper.'
     },
@@ -488,12 +261,6 @@ const starData = [
     {
         title: 'No Flirting',
         date: 'The Beginning',
-        timeline: 10,
-        importance: 0.9,
-        orbit: true,
-        orbitRadius: 4.0,
-        orbitSpeed: 0.07,
-        orbitPhase: 2.5,
         text:
             'It did not begin with flirting. It began with genuinely getting to know each other.'
     },
@@ -501,12 +268,6 @@ const starData = [
     {
         title: 'Starboy',
         date: '26 June 2026',
-        timeline: 25,
-        importance: 1.35,
-        orbit: true,
-        orbitRadius: 2.8,
-        orbitSpeed: 0.13,
-        orbitPhase: 3.1,
         text:
             'Devam called her “arshbae”, based on her Instagram username. She interpreted it as him calling her bae and replied: “yess my Starboy”.'
     },
@@ -514,12 +275,6 @@ const starData = [
     {
         title: 'The Question',
         date: '26 June 2026',
-        timeline: 27,
-        importance: 1.2,
-        orbit: true,
-        orbitRadius: 3.3,
-        orbitSpeed: 0.11,
-        orbitPhase: 4.0,
         text:
             'Devam hinted that he liked someone. Arsh kept asking who. Eventually she asked if it was her.'
     },
@@ -527,12 +282,6 @@ const starData = [
     {
         title: 'The Choice',
         date: '27 June 2026',
-        timeline: 30,
-        importance: 1.5,
-        orbit: true,
-        orbitRadius: 3.7,
-        orbitSpeed: 0.09,
-        orbitPhase: 5.0,
         text:
             'Devam told her he liked her but thought his goals would not allow a relationship. She changed his mind by making it clear that she cared about him, not simply his future success.'
     },
@@ -540,12 +289,6 @@ const starData = [
     {
         title: 'The Beginning',
         date: '28 July 2026',
-        timeline: 60,
-        importance: 1.8,
-        orbit: true,
-        orbitRadius: 2.6,
-        orbitSpeed: 0.14,
-        orbitPhase: 0.7,
         text:
             'The relationship officially began.'
     },
@@ -553,12 +296,6 @@ const starData = [
     {
         title: 'Dee',
         date: 'Private Name',
-        timeline: 63,
-        importance: 0.85,
-        orbit: true,
-        orbitRadius: 4.2,
-        orbitSpeed: 0.065,
-        orbitPhase: 1.8,
         text:
             'One of the names Arsh gave Devam.'
     },
@@ -566,12 +303,6 @@ const starData = [
     {
         title: 'Booboo Bear',
         date: 'Private Name',
-        timeline: 64,
-        importance: 1.0,
-        orbit: true,
-        orbitRadius: 3.9,
-        orbitSpeed: 0.075,
-        orbitPhase: 2.4,
         text:
             'Another name Arsh gave Devam. This one belongs to Devam.'
     },
@@ -579,12 +310,6 @@ const starData = [
     {
         title: 'The Café',
         date: '10 August 2026',
-        timeline: 75,
-        importance: 1.8,
-        orbit: true,
-        orbitRadius: 2.5,
-        orbitSpeed: 0.15,
-        orbitPhase: 3.0,
         text:
             'Their date. They were shy and smiling, listening to songs, leaning on each other and holding hands.'
     },
@@ -592,12 +317,6 @@ const starData = [
     {
         title: 'Enchanted',
         date: '10 August 2026',
-        timeline: 76,
-        importance: 1.15,
-        orbit: true,
-        orbitRadius: 3.1,
-        orbitSpeed: 0.12,
-        orbitPhase: 4.0,
         text:
             'One of the songs playing during their date.'
     },
@@ -605,12 +324,6 @@ const starData = [
     {
         title: 'Love Story',
         date: '10 August 2026',
-        timeline: 77,
-        importance: 1.15,
-        orbit: true,
-        orbitRadius: 3.6,
-        orbitSpeed: 0.10,
-        orbitPhase: 4.8,
         text:
             'Another song from their café date.'
     },
@@ -618,12 +331,6 @@ const starData = [
     {
         title: 'One Earphone',
         date: '10 August 2026',
-        timeline: 78,
-        importance: 1.3,
-        orbit: true,
-        orbitRadius: 2.9,
-        orbitSpeed: 0.13,
-        orbitPhase: 5.7,
         text:
             'They shared one pair of earphones, each listening from one side.'
     },
@@ -631,12 +338,6 @@ const starData = [
     {
         title: 'The Promise',
         date: 'Always',
-        timeline: 82,
-        importance: 1.7,
-        orbit: true,
-        orbitRadius: 4.0,
-        orbitSpeed: 0.065,
-        orbitPhase: 0.9,
         text:
             'No matter what happens in life, they will remember each other and consider this relationship a happy part of their lives.'
     },
@@ -644,12 +345,6 @@ const starData = [
     {
         title: 'Risk Is All',
         date: 'Our Song',
-        timeline: 84,
-        importance: 1.25,
-        orbit: true,
-        orbitRadius: 3.4,
-        orbitSpeed: 0.09,
-        orbitPhase: 2.2,
         text:
             'A song connected to their relationship and memories together.'
     },
@@ -657,10 +352,6 @@ const starData = [
     {
         title: 'Miami',
         date: 'The Future',
-        timeline: 100,
-        future: true,
-        importance: 1.7,
-        orbit: false,
         text:
             'A future dream: a home in Miami.'
     },
@@ -668,10 +359,6 @@ const starData = [
     {
         title: 'Weekends',
         date: 'The Future',
-        timeline: 100,
-        future: true,
-        importance: 1.5,
-        orbit: false,
         text:
             'A future where weekends are for beaches, movies, rides, movie theatres and simply enjoying life together.'
     },
@@ -679,12 +366,6 @@ const starData = [
     {
         title: 'Who She Is',
         date: 'Arsh',
-        timeline: 45,
-        importance: 1.3,
-        orbit: true,
-        orbitRadius: 4.4,
-        orbitSpeed: 0.06,
-        orbitPhase: 4.2,
         text:
             'Her kindness and the way she made Devam feel that she cared about who he actually was, rather than simply what he might become.'
     },
@@ -692,12 +373,6 @@ const starData = [
     {
         title: 'Who He Is',
         date: 'Devam',
-        timeline: 45,
-        importance: 1.3,
-        orbit: true,
-        orbitRadius: 4.4,
-        orbitSpeed: 0.06,
-        orbitPhase: 5.2,
         text:
             'The person Arsh saw as knowledgeable, intelligent, nerdy and someone with many ambitions and interests.'
     }
@@ -706,7 +381,7 @@ const starData = [
 
 
 /* =========================================================
-   11. MAIN STAR DATA
+   9. MAIN STAR DATA
    ========================================================= */
 
 const mainStarData = {
@@ -745,40 +420,7 @@ const mainStarData = {
 
 
 /* =========================================================
-   12. MEMORY STAR POSITIONS
-   ========================================================= */
-
-const memoryPositions = [
-
-    [-4.8, 2.7, -4.0],
-    [-2.8, -1.8, -5.5],
-    [-0.7, 3.4, -6.5],
-    [2.2, 2.4, -4.5],
-    [4.8, 1.2, -5.8],
-
-    [-5.5, -2.5, -2.5],
-    [-3.0, 0.5, -1.8],
-    [3.5, -2.4, -3.2],
-    [5.2, -1.0, -1.5],
-    [1.2, 3.8, -2.8],
-
-    [-5.8, 2.8, 2.0],
-    [-3.6, -2.8, 3.5],
-    [-1.2, 3.0, 3.8],
-    [2.8, 2.5, 3.0],
-    [5.5, 0.2, 3.8],
-
-    [-4.0, -0.5, 6.0],
-    [-1.0, -3.2, 5.0],
-    [2.4, -2.8, 6.2],
-    [4.5, 2.7, 5.8],
-    [0.0, 0.0, 7.0]
-
-];
-
-
-/* =========================================================
-   13. MEMORY STAR OBJECTS
+   10. INTERACTIVE MEMORY STARS
    ========================================================= */
 
 const interactiveStars = [];
@@ -794,31 +436,79 @@ const memoryCoreGeometry =
     );
 
 
+const memoryGlowGeometry =
+    new THREE.SphereGeometry(
+        0.23,
+        12,
+        12
+    );
+
+
 const memoryCoreMaterial =
     new THREE.MeshBasicMaterial({
 
-        color: 0xdfffff
+        color: 0xd9f8ff
 
     });
 
 
-const memoryGlowGeometry =
-    new THREE.SpriteMaterial({
+const memoryGlowMaterial =
+    new THREE.MeshBasicMaterial({
 
-        map: cyanStarTexture,
-
-        color: 0xffffff,
+        color: 0x55dfff,
 
         transparent: true,
 
-        opacity: 0.8,
+        opacity: 0.34,
 
-        depthWrite: false,
-
-        blending:
-            THREE.AdditiveBlending
+        depthWrite: false
 
     });
+
+
+const memoryPositions = [
+
+    [-4.8, 2.7, -4.0],
+
+    [-2.8, -1.8, -5.5],
+
+    [-0.7, 3.4, -6.5],
+
+    [2.2, 2.4, -4.5],
+
+    [4.8, 1.2, -5.8],
+
+    [-5.5, -2.5, -2.5],
+
+    [-3.0, 0.5, -1.8],
+
+    [3.5, -2.4, -3.2],
+
+    [5.2, -1.0, -1.5],
+
+    [1.2, 3.8, -2.8],
+
+    [-5.8, 2.8, 2.0],
+
+    [-3.6, -2.8, 3.5],
+
+    [-1.2, 3.0, 3.8],
+
+    [2.8, 2.5, 3.0],
+
+    [5.5, 0.2, 3.8],
+
+    [-4.0, -0.5, 6.0],
+
+    [-1.0, -3.2, 5.0],
+
+    [2.4, -2.8, 6.2],
+
+    [4.5, 2.7, 5.8],
+
+    [0.0, 0.0, 7.0]
+
+];
 
 
 for (
@@ -831,30 +521,18 @@ for (
         new THREE.Group();
 
 
+    const glow =
+        new THREE.Mesh(
+            memoryGlowGeometry,
+            memoryGlowMaterial.clone()
+        );
+
+
     const core =
         new THREE.Mesh(
             memoryCoreGeometry,
             memoryCoreMaterial.clone()
         );
-
-
-    const glow =
-        new THREE.Sprite(
-            memoryGlowGeometry.clone()
-        );
-
-
-    const size =
-        0.55 +
-        starData[i].importance *
-        0.30;
-
-
-    glow.scale.set(
-        size,
-        size,
-        1
-    );
 
 
     group.add(
@@ -873,8 +551,15 @@ for (
     );
 
 
-    group.userData.type =
-        'memory';
+    const scale =
+        0.88 +
+        (i % 5) * 0.08;
+
+
+    group.scale.setScalar(
+        scale
+    );
+
 
     group.userData.index =
         i;
@@ -882,17 +567,8 @@ for (
     group.userData.data =
         starData[i];
 
-    group.userData.basePosition =
-        group.position.clone();
-
-    group.userData.baseScale =
-        0.78 +
-        starData[i].importance *
-        0.22;
-
-    group.scale.setScalar(
-        group.userData.baseScale
-    );
+    group.userData.type =
+        'memory';
 
 
     scene.add(
@@ -912,7 +588,9 @@ for (
 
 
 /* =========================================================
-   14. MAIN GOLDEN STARS
+   11. MAIN STARS
+   Devam + Arsh
+   Bright yellow/gold.
    ========================================================= */
 
 const mainStars = [];
@@ -928,29 +606,54 @@ const mainCoreGeometry =
     );
 
 
+const mainGlowGeometry =
+    new THREE.SphereGeometry(
+        0.48,
+        20,
+        20
+    );
+
+
+const mainHaloGeometry =
+    new THREE.SphereGeometry(
+        0.72,
+        20,
+        20
+    );
+
+
 const mainCoreMaterial =
     new THREE.MeshBasicMaterial({
 
-        color: 0xffefa0
+        color: 0xfff2a3
 
     });
 
 
 const mainGlowMaterial =
-    new THREE.SpriteMaterial({
+    new THREE.MeshBasicMaterial({
 
-        map: goldenStarTexture,
-
-        color: 0xffffff,
+        color: 0xffd84d,
 
         transparent: true,
 
-        opacity: 0.95,
+        opacity: 0.24,
 
-        depthWrite: false,
+        depthWrite: false
 
-        blending:
-            THREE.AdditiveBlending
+    });
+
+
+const mainHaloMaterial =
+    new THREE.MeshBasicMaterial({
+
+        color: 0xffc933,
+
+        transparent: true,
+
+        opacity: 0.08,
+
+        depthWrite: false
 
     });
 
@@ -965,6 +668,20 @@ function createMainStar(
         new THREE.Group();
 
 
+    const halo =
+        new THREE.Mesh(
+            mainHaloGeometry,
+            mainHaloMaterial.clone()
+        );
+
+
+    const glow =
+        new THREE.Mesh(
+            mainGlowGeometry,
+            mainGlowMaterial.clone()
+        );
+
+
     const core =
         new THREE.Mesh(
             mainCoreGeometry,
@@ -972,18 +689,9 @@ function createMainStar(
         );
 
 
-    const glow =
-        new THREE.Sprite(
-            mainGlowMaterial.clone()
-        );
-
-
-    glow.scale.set(
-        1.65,
-        1.65,
-        1
+    group.add(
+        halo
     );
-
 
     group.add(
         glow
@@ -1020,6 +728,13 @@ function createMainStar(
         group
     );
 
+    /*
+       THIS IS THE IMPORTANT FIX.
+
+       The main-star cores are explicitly added
+       to the raycasting list.
+    */
+
     mainStarCores.push(
         core
     );
@@ -1047,7 +762,7 @@ const arshStar =
 
 
 /* =========================================================
-   15. GOLDEN CONNECTION
+   12. CONNECTION BETWEEN DEVAM + ARSH
    ========================================================= */
 
 const connectionGeometry =
@@ -1070,11 +785,11 @@ connectionGeometry.setAttribute(
 const connectionMaterial =
     new THREE.LineBasicMaterial({
 
-        color: 0xd9eff7,
+        color: 0xd6eff8,
 
         transparent: true,
 
-        opacity: 0.24
+        opacity: 0.25
 
     });
 
@@ -1092,170 +807,144 @@ scene.add(
 
 
 /* =========================================================
-   16. ORBIT PATHS
-   =========================================================
+   13. MAIN STAR PULSE RINGS
+   ========================================================= */
 
-   These are extremely subtle.
-   They become visible only when the corresponding
-   memory is active enough in the timeline.
-========================================================= */
-
-const orbitLines = [];
-
-
-for (
-    let i = 0;
-    i < starData.length;
-    i++
-) {
-
-    const data =
-        starData[i];
+const ringGeometry =
+    new THREE.RingGeometry(
+        0.28,
+        0.30,
+        32
+    );
 
 
-    if (
-        !data.orbit
-    ) {
+const devamRing =
+    new THREE.Mesh(
+        ringGeometry,
+        new THREE.MeshBasicMaterial({
 
-        orbitLines.push(
-            null
-        );
-
-        continue;
-
-    }
-
-
-    const points = [];
-
-
-    for (
-        let j = 0;
-        j <= 64;
-        j++
-    ) {
-
-        const angle =
-            (
-                j / 64
-            ) *
-            Math.PI *
-            2;
-
-
-        points.push(
-            new THREE.Vector3(
-                Math.cos(angle) *
-                data.orbitRadius,
-
-                Math.sin(angle * 1.3) *
-                0.18,
-
-                Math.sin(angle) *
-                data.orbitRadius
-            )
-        );
-
-    }
-
-
-    const geometry =
-        new THREE.BufferGeometry()
-            .setFromPoints(
-                points
-            );
-
-
-    const material =
-        new THREE.LineBasicMaterial({
-
-            color: 0x3e8ca6,
+            color: 0xffdf61,
 
             transparent: true,
 
-            opacity: 0.055,
+            opacity: 0.18,
 
-            depthWrite: false
+            side: THREE.DoubleSide
 
-        });
+        })
+    );
 
 
-    const line =
-        new THREE.LineLoop(
-            geometry,
-            material
+const arshRing =
+    new THREE.Mesh(
+        ringGeometry,
+        new THREE.MeshBasicMaterial({
+
+            color: 0xffdf61,
+
+            transparent: true,
+
+            opacity: 0.18,
+
+            side: THREE.DoubleSide
+
+        })
+    );
+
+
+devamRing.rotation.x =
+    Math.PI / 2;
+
+arshRing.rotation.x =
+    Math.PI / 2;
+
+
+scene.add(
+    devamRing
+);
+
+scene.add(
+    arshRing
+);
+
+
+/* =========================================================
+   14. MAIN STAR PROFILE PANEL
+   ========================================================= */
+
+function createProfilePanel() {
+
+    const panel =
+        document.createElement(
+            'div'
         );
 
+    panel.id =
+        'profilePanel';
 
-    scene.add(
-        line
+    panel.className =
+        'profile-panel';
+
+
+    panel.innerHTML = `
+
+        <button
+            class="profile-close"
+            id="profileClose">
+            ×
+        </button>
+
+        <div
+            class="profile-kicker"
+            id="profileKicker">
+            PARTICLE
+        </div>
+
+        <div
+            class="profile-title"
+            id="profileTitle">
+            —
+        </div>
+
+        <div
+            class="profile-nickname"
+            id="profileNickname">
+            —
+        </div>
+
+        <div
+            class="profile-qualities"
+            id="profileQualities">
+            —
+        </div>
+
+        <div
+            class="profile-description"
+            id="profileDescription">
+            —
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        panel
     );
 
 
-    orbitLines.push(
-        line
-    );
+    return panel;
 
 }
 
 
-/* =========================================================
-   17. PROFILE PANEL
-   ========================================================= */
-
 const profilePanel =
-    document.createElement(
-        'div'
+    createProfilePanel();
+
+
+const profileClose =
+    document.getElementById(
+        'profileClose'
     );
-
-
-profilePanel.className =
-    'profile-panel';
-
-
-profilePanel.innerHTML = `
-
-    <button
-        class="profile-close"
-        id="profileClose">
-        ×
-    </button>
-
-    <div
-        class="profile-kicker">
-        PARTICLE
-    </div>
-
-    <div
-        class="profile-title"
-        id="profileTitle">
-        —
-    </div>
-
-    <div
-        class="profile-nickname"
-        id="profileNickname">
-        —
-    </div>
-
-    <div
-        class="profile-qualities"
-        id="profileQualities">
-        —
-    </div>
-
-    <div
-        class="profile-description"
-        id="profileDescription">
-        —
-    </div>
-
-`;
-
-
-document.body.appendChild(
-    profilePanel
-);
 
 
 const profileTitle =
@@ -1314,134 +1003,70 @@ function closeProfile() {
 }
 
 
-document
-    .getElementById(
-        'profileClose'
-    )
-    .addEventListener(
-        'click',
-        closeProfile
-    );
-
-
-/* =========================================================
-   18. MEMORY PANEL
-   ========================================================= */
-
-const memoryPanel =
-    document.createElement(
-        'div'
-    );
-
-
-memoryPanel.className =
-    'memory-panel';
-
-
-memoryPanel.innerHTML = `
-
-    <button
-        class="memory-close"
-        id="memoryClose">
-        ×
-    </button>
-
-    <div
-        class="memory-kicker">
-        MEMORY
-    </div>
-
-    <div
-        class="memory-title"
-        id="memoryTitle">
-        —
-    </div>
-
-    <div
-        class="memory-date"
-        id="memoryDate">
-        —
-    </div>
-
-    <div
-        class="memory-text"
-        id="memoryText">
-        —
-    </div>
-
-    <div
-        class="memory-hint">
-        Every meaningful star here belongs
-        to your story.
-    </div>
-
-`;
-
-
-document.body.appendChild(
-    memoryPanel
+profileClose.addEventListener(
+    'click',
+    closeProfile
 );
 
 
-const memoryTitle =
-    document.getElementById(
-        'memoryTitle'
+/* =========================================================
+   15. DEVAM + ARSH CORE VISUALS
+   ========================================================= */
+
+const particleGeometry =
+    new THREE.SphereGeometry(
+        0.13,
+        16,
+        16
     );
 
 
-const memoryDate =
-    document.getElementById(
-        'memoryDate'
+const devamParticle =
+    new THREE.Mesh(
+        particleGeometry,
+        new THREE.MeshBasicMaterial({
+
+            color: 0xfff1a1
+
+        })
     );
 
 
-const memoryText =
-    document.getElementById(
-        'memoryText'
+const arshParticle =
+    new THREE.Mesh(
+        particleGeometry,
+        new THREE.MeshBasicMaterial({
+
+            color: 0xfff1a1
+
+        })
     );
 
 
-function openMemory(
-    data
-) {
+devamParticle.position.set(
+    -1.35,
+    0,
+    0
+);
 
-    memoryTitle.textContent =
-        data.title;
-
-    memoryDate.textContent =
-        data.date;
-
-    memoryText.textContent =
-        data.text;
-
-    memoryPanel.classList.add(
-        'open'
-    );
-
-}
+arshParticle.position.set(
+    1.35,
+    0,
+    0
+);
 
 
-function closeMemory() {
+scene.add(
+    devamParticle
+);
 
-    memoryPanel.classList.remove(
-        'open'
-    );
-
-}
-
-
-document
-    .getElementById(
-        'memoryClose'
-    )
-    .addEventListener(
-        'click',
-        closeMemory
-    );
+scene.add(
+    arshParticle
+);
 
 
 /* =========================================================
-   19. RAYCASTING
+   16. POINTER/RAYCASTER
    ========================================================= */
 
 const raycaster =
@@ -1465,31 +1090,26 @@ function updatePointer(
 ) {
 
     pointer.x =
-        (
-            event.clientX /
-            window.innerWidth
-        ) *
+        (event.clientX /
+            window.innerWidth) *
         2 -
         1;
 
 
     pointer.y =
-        -(
-            event.clientY /
-            window.innerHeight
-        ) *
+        -(event.clientY /
+            window.innerHeight) *
         2 +
         1;
 
 }
 
 
-/*
-   Only currently active memories are
-   included in the raycast list.
-*/
+/* =========================================================
+   17. FIND INTERACTIVE OBJECT
+   ========================================================= */
 
-function getHit(
+function getInteractiveHit(
     event
 ) {
 
@@ -1504,34 +1124,27 @@ function getHit(
     );
 
 
-    const clickable =
+    /*
+       IMPORTANT:
+
+       Both systems are included:
+
+       1. 20 memory stars
+       2. Devam + Arsh
+
+       This restores clicking on the two main stars.
+    */
+
+    const allClickableCores =
         [
+            ...interactiveStarCores,
             ...mainStarCores
         ];
 
 
-    for (
-        const star
-        of interactiveStars
-    ) {
-
-        if (
-            star.visible &&
-            star.userData.active
-        ) {
-
-            clickable.push(
-                star.children[1]
-            );
-
-        }
-
-    }
-
-
     const hits =
         raycaster.intersectObjects(
-            clickable,
+            allClickableCores,
             false
         );
 
@@ -1551,7 +1164,171 @@ function getHit(
 
 
 /* =========================================================
+   18. SELECT MAIN STAR
+   ========================================================= */
+
+function selectMainStar(
+    core
+) {
+
+    const group =
+        core.parent;
+
+
+    if (
+        !group
+    ) {
+        return;
+    }
+
+
+    selectedObject =
+        group;
+
+
+    openProfile(
+        group.userData.data
+    );
+
+
+    focusCameraAt(
+        group
+    );
+
+}
+
+
+/* =========================================================
+   19. MEMORY PANEL
+   ========================================================= */
+
+const memoryPanel =
+    document.createElement(
+        'div'
+    );
+
+
+memoryPanel.className =
+    'memory-panel';
+
+
+memoryPanel.innerHTML = `
+
+    <button
+        class="memory-close"
+        id="memoryClose">
+        ×
+    </button>
+
+    <div
+        class="memory-kicker"
+        id="memoryKicker">
+        MEMORY
+    </div>
+
+    <div
+        class="memory-title"
+        id="memoryTitle">
+        —
+    </div>
+
+    <div
+        class="memory-date"
+        id="memoryDate">
+        —
+    </div>
+
+    <div
+        class="memory-text"
+        id="memoryText">
+        —
+    </div>
+
+    <div class="memory-hint">
+        This star is part of your story.
+        Move freely through the universe and
+        select another star whenever you want.
+    </div>
+
+`;
+
+
+document.body.appendChild(
+    memoryPanel
+);
+
+
+const memoryClose =
+    document.getElementById(
+        'memoryClose'
+    );
+
+
+const memoryTitle =
+    document.getElementById(
+        'memoryTitle'
+    );
+
+
+const memoryDate =
+    document.getElementById(
+        'memoryDate'
+    );
+
+
+const memoryText =
+    document.getElementById(
+        'memoryText'
+    );
+
+
+const memoryKicker =
+    document.getElementById(
+        'memoryKicker'
+    );
+
+
+function openMemory(
+    data
+) {
+
+    memoryTitle.textContent =
+        data.title;
+
+    memoryDate.textContent =
+        data.date;
+
+    memoryText.textContent =
+        data.text;
+
+    memoryKicker.textContent =
+        'MEMORY';
+
+    memoryPanel.classList.add(
+        'open'
+    );
+
+}
+
+
+function closeMemory() {
+
+    memoryPanel.classList.remove(
+        'open'
+    );
+
+}
+
+
+memoryClose.addEventListener(
+    'click',
+    closeMemory
+);
+
+
+/* =========================================================
    20. CAMERA FOCUS
+   Short cinematic movement only.
    ========================================================= */
 
 let focusActive =
@@ -1582,12 +1359,12 @@ function focusCameraAt(
     group
 ) {
 
-    const world =
+    const worldPosition =
         new THREE.Vector3();
 
 
     group.getWorldPosition(
-        world
+        worldPosition
     );
 
 
@@ -1600,7 +1377,7 @@ function focusCameraAt(
         new THREE.Vector3()
             .subVectors(
                 camera.position,
-                world
+                worldPosition
             );
 
 
@@ -1622,7 +1399,7 @@ function focusCameraAt(
 
 
     focusTargetPosition.copy(
-        world
+        worldPosition
     );
 
 
@@ -1634,7 +1411,7 @@ function focusCameraAt(
 
 
     focusLookTarget.copy(
-        world
+        worldPosition
     );
 
 
@@ -1649,92 +1426,11 @@ function focusCameraAt(
 
 
 /* =========================================================
-   21. MAIN STAR SELECTION
-   ========================================================= */
-
-function selectMainStar(
-    core
-) {
-
-    const group =
-        core.parent;
-
-
-    if (
-        !group
-    ) {
-
-        return;
-
-    }
-
-
-    selectedObject =
-        group;
-
-
-    closeMemory();
-
-
-    openProfile(
-        group.userData.data
-    );
-
-
-    focusCameraAt(
-        group
-    );
-
-}
-
-
-/* =========================================================
-   22. MEMORY SELECTION
-   ========================================================= */
-
-function selectMemory(
-    core
-) {
-
-    const group =
-        core.parent;
-
-
-    if (
-        !group
-    ) {
-
-        return;
-
-    }
-
-
-    selectedObject =
-        group;
-
-
-    closeProfile();
-
-
-    openMemory(
-        group.userData.data
-    );
-
-
-    focusCameraAt(
-        group
-    );
-
-}
-
-
-/* =========================================================
-   23. POINTER DOWN
+   21. CLICK / DRAG DETECTION
    ========================================================= */
 
 let pointerDownX =
     0;
-
 
 let pointerDownY =
     0;
@@ -1752,8 +1448,7 @@ renderer.domElement.addEventListener(
 
 
         /*
-           Once the user starts interacting,
-           cinematic focus immediately stops.
+           User takes control immediately.
         */
 
         focusActive =
@@ -1762,10 +1457,6 @@ renderer.domElement.addEventListener(
     }
 );
 
-
-/* =========================================================
-   24. POINTER UP
-   ========================================================= */
 
 renderer.domElement.addEventListener(
     'pointerup',
@@ -1789,7 +1480,7 @@ renderer.domElement.addEventListener(
 
 
         /*
-           Dragging is not clicking.
+           Movement means drag.
         */
 
         if (
@@ -1802,7 +1493,7 @@ renderer.domElement.addEventListener(
 
 
         const hit =
-            getHit(
+            getInteractiveHit(
                 event
             );
 
@@ -1833,6 +1524,8 @@ renderer.domElement.addEventListener(
             'main'
         ) {
 
+            closeMemory();
+
             selectMainStar(
                 hit
             );
@@ -1848,8 +1541,17 @@ renderer.domElement.addEventListener(
             'memory'
         ) {
 
-            selectMemory(
-                hit
+            closeProfile();
+
+            selectedObject =
+                group;
+
+            openMemory(
+                group.userData.data
+            );
+
+            focusCameraAt(
+                group
             );
 
         }
@@ -1859,7 +1561,7 @@ renderer.domElement.addEventListener(
 
 
 /* =========================================================
-   25. HOVER
+   22. HOVER
    ========================================================= */
 
 renderer.domElement.addEventListener(
@@ -1867,7 +1569,7 @@ renderer.domElement.addEventListener(
     (event) => {
 
         const hit =
-            getHit(
+            getInteractiveHit(
                 event
             );
 
@@ -1893,10 +1595,8 @@ renderer.domElement.addEventListener(
             hoveredObject =
                 hit.parent;
 
-
             hoveredObject.userData.hovered =
                 true;
-
 
             renderer.domElement.style.cursor =
                 'pointer';
@@ -1914,311 +1614,7 @@ renderer.domElement.addEventListener(
 
 
 /* =========================================================
-   26. TIME SYSTEM
-   ========================================================= */
-
-let universeTime =
-    100;
-
-
-/*
-   100 = current/latest state.
-
-   The slider can move backward through the
-   actual story.
-*/
-
-
-function isMemoryActive(
-    data
-) {
-
-    if (
-        data.future
-    ) {
-
-        return universeTime >= 96;
-
-    }
-
-
-    return universeTime >=
-        data.timeline;
-
-}
-
-
-/* =========================================================
-   27. MEMORY VISIBILITY
-   ========================================================= */
-
-function updateMemoryTimeline() {
-
-    for (
-        let i = 0;
-        i < interactiveStars.length;
-        i++
-    ) {
-
-        const star =
-            interactiveStars[i];
-
-
-        const data =
-            star.userData.data;
-
-
-        const active =
-            isMemoryActive(
-                data
-            );
-
-
-        star.userData.active =
-            active;
-
-
-        /*
-           Calculate how strongly the star
-           belongs to the current timeline.
-        */
-
-        let visibility =
-            0;
-
-
-        if (
-            active
-        ) {
-
-            visibility =
-                Math.min(
-                    1,
-                    0.30 +
-                    (
-                        universeTime -
-                        data.timeline
-                    ) *
-                    0.04
-                );
-
-        }
-
-
-        if (
-            data.future &&
-            universeTime < 96
-        ) {
-
-            visibility =
-                0.035;
-
-        }
-
-
-        /*
-           The star remains physically present,
-           but future objects stay ghost-like
-           before their time.
-        */
-
-        star.visible =
-            visibility > 0;
-
-
-        const glow =
-            star.children[0];
-
-
-        const core =
-            star.children[1];
-
-
-        glow.material.opacity =
-            (
-                0.15 +
-                visibility *
-                0.72
-            );
-
-
-        core.material.opacity =
-            Math.max(
-                0.12,
-                visibility
-            );
-
-
-        /*
-           Orbit paths follow timeline visibility.
-        */
-
-        const orbit =
-            orbitLines[i];
-
-
-        if (
-            orbit
-        ) {
-
-            orbit.material.opacity =
-                active
-                    ? 0.025 +
-                      visibility *
-                      0.045
-                    : 0;
-
-        }
-
-    }
-
-}
-
-
-/* =========================================================
-   28. TIMELINE SLIDER
-   ========================================================= */
-
-const timelineUI =
-    document.createElement(
-        'div'
-    );
-
-
-timelineUI.className =
-    'timeline-ui';
-
-
-timelineUI.innerHTML = `
-
-    <div
-        class="timeline-label"
-        id="timelineLabel">
-        NOW
-    </div>
-
-    <input
-        id="timelineSlider"
-        type="range"
-        min="0"
-        max="100"
-        value="100"
-        step="0.1">
-
-    <div
-        class="timeline-dates">
-
-        <span>
-            30 MAY
-        </span>
-
-        <span>
-            26 JUN
-        </span>
-
-        <span>
-            28 JUL
-        </span>
-
-        <span>
-            10 AUG
-        </span>
-
-        <span>
-            FUTURE
-        </span>
-
-    </div>
-
-`;
-
-
-document.body.appendChild(
-    timelineUI
-);
-
-
-const timelineSlider =
-    document.getElementById(
-        'timelineSlider'
-    );
-
-
-const timelineLabel =
-    document.getElementById(
-        'timelineLabel'
-    );
-
-
-function getTimelineLabel(
-    value
-) {
-
-    if (
-        value < 15
-    ) {
-
-        return '30 MAY';
-
-    }
-
-
-    if (
-        value < 45
-    ) {
-
-        return 'JUNE';
-
-    }
-
-
-    if (
-        value < 70
-    ) {
-
-        return '28 JUL';
-
-    }
-
-
-    if (
-        value < 96
-    ) {
-
-        return '10 AUG';
-
-    }
-
-
-    return 'FUTURE';
-
-}
-
-
-timelineSlider.addEventListener(
-    'input',
-    () => {
-
-        universeTime =
-            Number(
-                timelineSlider.value
-            );
-
-
-        timelineLabel.textContent =
-            getTimelineLabel(
-                universeTime
-            );
-
-
-        updateMemoryTimeline();
-
-    }
-);
-
-
-/* =========================================================
-   29. MAIN STAR ANIMATION
+   23. MAIN STAR ANIMATION
    ========================================================= */
 
 function animateMainStars(
@@ -2235,26 +1631,28 @@ function animateMainStars(
             mainStars[i];
 
 
-        const glow =
+        const halo =
             star.children[0];
 
 
-        const core =
+        const glow =
             star.children[1];
+
+
+        const core =
+            star.children[2];
 
 
         const pulse =
             (
                 Math.sin(
-                    time *
-                    0.002 +
-                    i *
-                    1.8
+                    time * 0.002 +
+                    i * 1.8
                 ) + 1
             ) / 2;
 
 
-        let scale =
+        let targetScale =
             1;
 
 
@@ -2262,8 +1660,8 @@ function animateMainStars(
             star.userData.hovered
         ) {
 
-            scale =
-                1.15;
+            targetScale =
+                1.16;
 
         }
 
@@ -2273,41 +1671,69 @@ function animateMainStars(
             star
         ) {
 
-            scale =
+            targetScale =
                 1.24 +
-                pulse *
-                0.05;
+                pulse * 0.05;
 
         }
 
 
-        star.scale.lerp(
-            new THREE.Vector3(
-                scale,
-                scale,
-                scale
-            ),
-            0.10
-        );
+        star.scale.x +=
+            (
+                targetScale -
+                star.scale.x
+            ) * 0.10;
+
+
+        star.scale.y +=
+            (
+                targetScale -
+                star.scale.y
+            ) * 0.10;
+
+
+        star.scale.z +=
+            (
+                targetScale -
+                star.scale.z
+            ) * 0.10;
 
 
         glow.material.opacity =
-            0.72 +
-            pulse *
-            0.23;
+            0.20 +
+            pulse * 0.13;
+
+
+        halo.material.opacity =
+            0.055 +
+            pulse * 0.035;
 
 
         core.material.color.setHex(
-            0xffefa0
+            0xfff0a0
         );
 
     }
+
+
+    /*
+       Make the actual particle cores
+       glow in the same golden family.
+    */
+
+    devamParticle.material.color.setHex(
+        0xfff0a0
+    );
+
+    arshParticle.material.color.setHex(
+        0xfff0a0
+    );
 
 }
 
 
 /* =========================================================
-   30. MEMORY STAR ANIMATION
+   24. MEMORY STAR ANIMATION
    ========================================================= */
 
 function animateMemoryStars(
@@ -2324,35 +1750,41 @@ function animateMemoryStars(
             interactiveStars[i];
 
 
-        const data =
-            star.userData.data;
-
-
         const glow =
             star.children[0];
+
+
+        const core =
+            star.children[1];
 
 
         const pulse =
             (
                 Math.sin(
-                    time *
-                    0.0015 +
-                    i *
-                    0.63
+                    time * 0.0015 +
+                    i * 0.65
                 ) + 1
             ) / 2;
 
 
         let targetScale =
-            star.userData.baseScale;
+            1;
+
+
+        let targetGlow =
+            0.28 +
+            pulse * 0.10;
 
 
         if (
             star.userData.hovered
         ) {
 
-            targetScale *=
-                1.20;
+            targetScale =
+                1.25;
+
+            targetGlow =
+                0.48;
 
         }
 
@@ -2362,10 +1794,12 @@ function animateMemoryStars(
             star
         ) {
 
-            targetScale *=
-                1.15 +
-                pulse *
-                0.05;
+            targetScale =
+                1.34 +
+                pulse * 0.04;
+
+            targetGlow =
+                0.62;
 
         }
 
@@ -2374,171 +1808,57 @@ function animateMemoryStars(
             (
                 targetScale -
                 star.scale.x
-            ) *
-            0.10;
+            ) * 0.12;
 
 
         star.scale.y +=
             (
                 targetScale -
                 star.scale.y
-            ) *
-            0.10;
+            ) * 0.12;
 
 
         star.scale.z +=
             (
                 targetScale -
                 star.scale.z
-            ) *
-            0.10;
+            ) * 0.12;
+
+
+        glow.material.opacity +=
+            (
+                targetGlow -
+                glow.material.opacity
+            ) * 0.10;
+
+
+        core.material.color.setHex(
+            0xd9f8ff
+        );
 
 
         /*
-           Realistic star shimmer.
-        */
-
-        glow.material.opacity =
-            0.45 +
-            pulse *
-            0.30;
-
-
-        /*
-           Orbiting memories.
-
-           Instead of simply moving randomly,
-           memories with an orbit property follow
-           stable paths around the centre.
+           Gentle movement.
         */
 
         if (
-            data.orbit &&
-            star.userData.active
+            star.userData.baseY ===
+            undefined
         ) {
 
-            const angle =
-                data.orbitPhase +
-                time *
-                0.0001 *
-                data.orbitSpeed *
-                100;
-
-
-            const radius =
-                data.orbitRadius;
-
-
-            const x =
-                Math.cos(angle) *
-                radius;
-
-
-            const z =
-                Math.sin(angle) *
-                radius;
-
-
-            const y =
-                Math.sin(
-                    angle *
-                    1.7
-                ) *
-                0.32;
-
-
-            star.position.x +=
-                (
-                    x -
-                    star.position.x
-                ) *
-                0.018;
-
-
-            star.position.y +=
-                (
-                    y -
-                    star.position.y
-                ) *
-                0.018;
-
-
-            star.position.z +=
-                (
-                    z -
-                    star.position.z
-                ) *
-                0.018;
+            star.userData.baseY =
+                star.position.y;
 
         }
-        else if (
-            !data.orbit
-        ) {
-
-            /*
-               Non-orbiting memories gently
-               drift around their original location.
-            */
-
-            const base =
-                star.userData.basePosition;
 
 
-            const driftX =
-                Math.sin(
-                    time *
-                    0.00022 +
-                    i
-                ) *
-                0.08;
-
-
-            const driftY =
-                Math.cos(
-                    time *
-                    0.00019 +
-                    i
-                ) *
-                0.06;
-
-
-            const driftZ =
-                Math.sin(
-                    time *
-                    0.00017 +
-                    i *
-                    0.7
-                ) *
-                0.08;
-
-
-            star.position.x +=
-                (
-                    base.x +
-                    driftX -
-                    star.position.x
-                ) *
-                0.012;
-
-
-            star.position.y +=
-                (
-                    base.y +
-                    driftY -
-                    star.position.y
-                ) *
-                0.012;
-
-
-            star.position.z +=
-                (
-                    base.z +
-                    driftZ -
-                    star.position.z
-                ) *
-                0.012;
-
-        }
+        star.position.y =
+            star.userData.baseY +
+            Math.sin(
+                time * 0.00045 +
+                i
+            ) *
+            0.045;
 
     }
 
@@ -2546,12 +1866,10 @@ function animateMemoryStars(
 
 
 /* =========================================================
-   31. CONNECTION ANIMATION
+   25. DEVAM + ARSH CONNECTION
    ========================================================= */
 
-function animateConnection(
-    time
-) {
+function animateConnection() {
 
     connectionPositions[0] =
         devamStar.position.x;
@@ -2580,25 +1898,44 @@ function animateConnection(
         true;
 
 
-    const pulse =
-        (
-            Math.sin(
-                time *
-                0.0015
-            ) + 1
-        ) / 2;
+    /*
+       Keep the visual particles moving
+       subtly around the main stars.
+    */
+
+    const time =
+        clock.getElapsedTime();
 
 
-    connectionMaterial.opacity =
-        0.17 +
-        pulse *
-        0.10;
+    devamParticle.position.y =
+        Math.sin(
+            time * 1.2
+        ) *
+        0.08;
+
+
+    arshParticle.position.y =
+        Math.sin(
+            time * 1.1 +
+            1.7
+        ) *
+        0.08;
+
+
+    devamRing.position.copy(
+        devamParticle.position
+    );
+
+
+    arshRing.position.copy(
+        arshParticle.position
+    );
 
 }
 
 
 /* =========================================================
-   32. CAMERA FOCUS UPDATE
+   26. CAMERA FOCUS UPDATE
    ========================================================= */
 
 function updateCameraFocus(
@@ -2639,14 +1976,10 @@ function updateCameraFocus(
 
     const eased =
         progress < 0.5
-            ? 2 *
-              progress *
-              progress
+            ? 2 * progress * progress
             : 1 -
               Math.pow(
-                  -2 *
-                  progress +
-                  2,
+                  -2 * progress + 2,
                   2
               ) /
               2;
@@ -2668,30 +2001,7 @@ function updateCameraFocus(
 
 
 /* =========================================================
-   33. QUANTUM BUTTON
-   ========================================================= */
-
-const quantumButton =
-    document.createElement(
-        'button'
-    );
-
-
-quantumButton.className =
-    'top-button';
-
-
-quantumButton.textContent =
-    'QUANTUM STATE';
-
-
-document.body.appendChild(
-    quantumButton
-);
-
-
-/* =========================================================
-   34. QUANTUM PANEL
+   27. QUANTUM PANEL
    ========================================================= */
 
 const quantumPanel =
@@ -2731,12 +2041,14 @@ quantumPanel.innerHTML = `
     <div class="quantum-section">
 
         <h3>
-            What is a quantum state?
+            1. What is a quantum state?
         </h3>
 
         <p>
-            A quantum state describes the possible
-            state of a quantum system.
+            In quantum mechanics, a system is
+            described by a quantum state.
+            It contains everything we can know
+            about that system.
         </p>
 
         <div class="equation">
@@ -2748,12 +2060,26 @@ quantumPanel.innerHTML = `
     <div class="quantum-section">
 
         <h3>
-            Probability
+            2. Superposition
         </h3>
 
         <p>
-            The amplitudes determine the probabilities
-            of different measurement outcomes.
+            A quantum system can be described
+            as a combination of possible states
+            before measurement.
+        </p>
+
+    </div>
+
+    <div class="quantum-section">
+
+        <h3>
+            3. Probability
+        </h3>
+
+        <p>
+            The amplitudes determine the
+            probabilities of different outcomes.
         </p>
 
         <div class="equation">
@@ -2765,12 +2091,26 @@ quantumPanel.innerHTML = `
     <div class="quantum-section">
 
         <h3>
-            Entanglement
+            4. Measurement
         </h3>
 
         <p>
-            Multiple quantum systems can share a joint
-            state with correlations between them.
+            When a quantum system is measured,
+            a definite result is obtained.
+        </p>
+
+    </div>
+
+    <div class="quantum-section">
+
+        <h3>
+            5. Entanglement
+        </h3>
+
+        <p>
+            Multiple quantum systems can share
+            a joint state whose correlations cannot
+            be described independently.
         </p>
 
         <div class="equation">
@@ -2783,14 +2123,15 @@ quantumPanel.innerHTML = `
     <div class="quantum-section">
 
         <h3>
-            And that is the point.
+            6. And that is the point.
         </h3>
 
         <p>
-            The universe uses quantum physics as a
-            metaphor for connection. Your relationship
-            is not literally a quantum-entangled physical
-            system. The science inspires the story.
+            The universe uses quantum physics
+            as a metaphor for connection.
+            Your relationship is not literally
+            a quantum-entangled physical system.
+            The science inspires the story.
         </p>
 
     </div>
@@ -2801,6 +2142,31 @@ quantumPanel.innerHTML = `
 document.body.appendChild(
     quantumPanel
 );
+
+
+const quantumButton =
+    document.createElement(
+        'button'
+    );
+
+
+quantumButton.className =
+    'top-button';
+
+
+quantumButton.textContent =
+    'QUANTUM STATE';
+
+
+document.body.appendChild(
+    quantumButton
+);
+
+
+const quantumClose =
+    document.getElementById(
+        'quantumClose'
+    );
 
 
 quantumButton.addEventListener(
@@ -2815,24 +2181,20 @@ quantumButton.addEventListener(
 );
 
 
-document
-    .getElementById(
-        'quantumClose'
-    )
-    .addEventListener(
-        'click',
-        () => {
+quantumClose.addEventListener(
+    'click',
+    () => {
 
-            quantumPanel.classList.remove(
-                'open'
-            );
+        quantumPanel.classList.remove(
+            'open'
+        );
 
-        }
-    );
+    }
+);
 
 
 /* =========================================================
-   35. TUTORIAL BUTTON
+   28. TUTORIAL
    ========================================================= */
 
 const tutorialButton =
@@ -2854,10 +2216,6 @@ document.body.appendChild(
 );
 
 
-/* =========================================================
-   36. TUTORIAL PANEL
-   ========================================================= */
-
 const tutorialPanel =
     document.createElement(
         'div'
@@ -2865,7 +2223,7 @@ const tutorialPanel =
 
 
 tutorialPanel.className =
-    'quantum-panel';
+    'quantum-panel tutorial-panel';
 
 
 tutorialPanel.innerHTML = `
@@ -2892,6 +2250,12 @@ document.body.appendChild(
 );
 
 
+const tutorialClose =
+    document.getElementById(
+        'tutorialClose'
+    );
+
+
 const tutorialContent =
     document.getElementById(
         'tutorialContent'
@@ -2913,7 +2277,7 @@ const tutorialPages = [
             'What is a quantum state?',
 
         text:
-            'A quantum state describes the possible state of a quantum system.'
+            'A quantum state describes the possible state of a quantum system and everything we can know about it.'
     },
 
     {
@@ -2921,7 +2285,7 @@ const tutorialPages = [
             'Superposition',
 
         text:
-            'A quantum state can be a combination of possible states before measurement.'
+            'Instead of being restricted to one classical possibility, a quantum state can be a combination of possibilities.'
     },
 
     {
@@ -2929,7 +2293,7 @@ const tutorialPages = [
             'Probability',
 
         text:
-            'The amplitudes determine the probabilities of different measurement outcomes.'
+            'The amplitudes inside the quantum state determine the probabilities of possible measurement outcomes.'
     },
 
     {
@@ -2937,7 +2301,7 @@ const tutorialPages = [
             'Measurement',
 
         text:
-            'When a quantum system is measured, a definite result is obtained.'
+            'When a quantum system is measured, we obtain a definite result.'
     },
 
     {
@@ -2945,7 +2309,7 @@ const tutorialPages = [
             'Entanglement',
 
         text:
-            'Two quantum systems can share a joint state whose correlations connect their measurement outcomes.'
+            'Two quantum systems can share a joint state. Measuring one can reveal correlations with the other.'
     },
 
     {
@@ -2953,7 +2317,7 @@ const tutorialPages = [
             'And that is the point.',
 
         text:
-            'Our universe uses these ideas as a metaphor. We are not literally quantum-entangled particles. Physics simply gives us a beautiful language for connection, possibility and shared history.'
+            'Our universe uses these ideas as a metaphor. We are not literally quantum-entangled particles. The language of physics simply gives us a beautiful way to represent connection, possibility and shared history.'
     }
 
 ];
@@ -3031,6 +2395,7 @@ function renderTutorial() {
 
                 tutorialPage++;
 
+
                 renderTutorial();
 
             }
@@ -3060,86 +2425,20 @@ tutorialButton.addEventListener(
 );
 
 
-document
-    .getElementById(
-        'tutorialClose'
-    )
-    .addEventListener(
-        'click',
-        () => {
+tutorialClose.addEventListener(
+    'click',
+    () => {
 
-            tutorialPanel.classList.remove(
-                'open'
-            );
+        tutorialPanel.classList.remove(
+            'open'
+        );
 
-        }
-    );
-
-
-/* =========================================================
-   37. TITLE
-   ========================================================= */
-
-const title =
-    document.createElement(
-        'div'
-    );
-
-
-title.textContent =
-    'OUR UNIVERSE';
-
-
-title.className =
-    'universe-title';
-
-
-document.body.appendChild(
-    title
+    }
 );
 
 
 /* =========================================================
-   38. LEGEND
-   ========================================================= */
-
-const legend =
-    document.createElement(
-        'div'
-    );
-
-
-legend.className =
-    'legend';
-
-
-legend.innerHTML = `
-
-    <div>
-        <span class="legend-yellow"></span>
-        Devam + Arsh
-    </div>
-
-    <div>
-        <span class="legend-blue"></span>
-        memories
-    </div>
-
-    <div>
-        <span class="legend-faint"></span>
-        universe
-    </div>
-
-`;
-
-
-document.body.appendChild(
-    legend
-);
-
-
-/* =========================================================
-   39. CSS
+   29. UI / VISUAL STYLE
    ========================================================= */
 
 const style =
@@ -3154,161 +2453,27 @@ style.textContent = `
         box-sizing: border-box;
     }
 
-
     body {
         font-family:
             Arial,
             Helvetica,
             sans-serif;
 
-        color:
-            white;
-    }
-
-
-    .universe-title {
-
-        position:
-            fixed;
-
-        top:
-            22px;
-
-        left:
-            50%;
-
-        transform:
-            translateX(-50%);
-
-        z-index:
-            15;
-
-        pointer-events:
-            none;
-
-        font-size:
-            13px;
-
-        letter-spacing:
-            5px;
-
-        color:
-            rgba(210,240,248,0.72);
-
-    }
-
-
-    .legend {
-
-        position:
-            fixed;
-
-        left:
-            18px;
-
-        bottom:
-            105px;
-
-        z-index:
-            15;
-
-        pointer-events:
-            none;
-
-        font-size:
-            10px;
-
-        line-height:
-            1.9;
-
-        color:
-            rgba(190,230,240,0.55);
-
-    }
-
-
-    .legend-yellow,
-    .legend-blue,
-    .legend-faint {
-
-        display:
-            inline-block;
-
-        border-radius:
-            50%;
-
-        margin-right:
-            7px;
-
-    }
-
-
-    .legend-yellow {
-
-        width:
-            8px;
-
-        height:
-            8px;
-
-        background:
-            #ffe47a;
-
-        box-shadow:
-            0 0 10px
-            rgba(255,215,70,0.95);
-
-    }
-
-
-    .legend-blue {
-
-        width:
-            7px;
-
-        height:
-            7px;
-
-        background:
-            #9feeff;
-
-        box-shadow:
-            0 0 8px
-            rgba(60,220,255,0.9);
-
-    }
-
-
-    .legend-faint {
-
-        width:
-            5px;
-
-        height:
-            5px;
-
-        background:
-            #83b8ca;
-
+        color: white;
     }
 
 
     .top-button {
 
-        position:
-            fixed;
+        position: fixed;
 
-        top:
-            20px;
+        top: 20px;
 
-        right:
-            20px;
+        right: 20px;
 
-        z-index:
-            25;
+        z-index: 20;
 
-        pointer-events:
-            auto;
+        pointer-events: auto;
 
         border:
             1px solid
@@ -3352,32 +2517,26 @@ style.textContent = `
     .profile-panel,
     .memory-panel {
 
-        position:
-            fixed;
+        position: fixed;
 
-        top:
-            0;
+        top: 0;
 
-        right:
-            0;
+        right: 0;
 
-        z-index:
-            30;
+        z-index: 30;
 
         width:
             min(390px, 88vw);
 
-        height:
-            100vh;
+        height: 100vh;
 
         padding:
             34px 28px;
 
-        overflow-y:
-            auto;
+        overflow-y: auto;
 
         background:
-            rgba(1,10,16,0.91);
+            rgba(1,10,16,0.90);
 
         border-left:
             1px solid
@@ -3411,20 +2570,15 @@ style.textContent = `
     .memory-close,
     .quantum-close {
 
-        position:
-            absolute;
+        position: absolute;
 
-        top:
-            18px;
+        top: 18px;
 
-        right:
-            20px;
+        right: 20px;
 
-        border:
-            none;
+        border: none;
 
-        background:
-            none;
+        background: none;
 
         color:
             rgba(220,248,255,0.72);
@@ -3559,29 +2713,23 @@ style.textContent = `
 
     .quantum-panel {
 
-        position:
-            fixed;
+        position: fixed;
 
-        top:
-            0;
+        top: 0;
 
-        left:
-            0;
+        left: 0;
 
-        z-index:
-            30;
+        z-index: 30;
 
         width:
             min(440px, 90vw);
 
-        height:
-            100vh;
+        height: 100vh;
 
         padding:
             34px;
 
-        overflow-y:
-            auto;
+        overflow-y: auto;
 
         background:
             rgba(1,10,16,0.93);
@@ -3708,20 +2856,15 @@ style.textContent = `
 
     .tutorial-button {
 
-        position:
-            fixed;
+        position: fixed;
 
-        right:
-            20px;
+        right: 20px;
 
-        bottom:
-            70px;
+        bottom: 70px;
 
-        z-index:
-            25;
+        z-index: 20;
 
-        pointer-events:
-            auto;
+        pointer-events: auto;
 
         border:
             1px solid
@@ -3806,176 +2949,12 @@ style.textContent = `
     }
 
 
-    /* ===============================
-       TIMELINE
-       =============================== */
-
-    .timeline-ui {
-
-        position:
-            fixed;
-
-        left:
-            50%;
-
-        bottom:
-            17px;
-
-        transform:
-            translateX(-50%);
-
-        z-index:
-            25;
-
-        width:
-            min(600px, 82vw);
-
-        pointer-events:
-            auto;
-
-        text-align:
-            center;
-
-    }
-
-
-    .timeline-label {
-
-        margin-bottom:
-            4px;
-
-        font-size:
-            9px;
-
-        letter-spacing:
-            2px;
-
-        color:
-            rgba(210,242,250,0.62);
-
-    }
-
-
-    #timelineSlider {
-
-        width:
-            100%;
-
-        height:
-            3px;
-
-        appearance:
-            none;
-
-        background:
-            rgba(130,200,220,0.20);
-
-        border-radius:
-            5px;
-
-        outline:
-            none;
-
-        cursor:
-            pointer;
-
-    }
-
-
-    #timelineSlider::-webkit-slider-thumb {
-
-        appearance:
-            none;
-
-        width:
-            12px;
-
-        height:
-            12px;
-
-        border-radius:
-            50%;
-
-        background:
-            #d8f7ff;
-
-        box-shadow:
-            0 0 10px
-            rgba(90,220,255,0.8);
-
-        cursor:
-            pointer;
-
-    }
-
-
-    #timelineSlider::-moz-range-thumb {
-
-        width:
-            12px;
-
-        height:
-            12px;
-
-        border:
-            none;
-
-        border-radius:
-            50%;
-
-        background:
-            #d8f7ff;
-
-        box-shadow:
-            0 0 10px
-            rgba(90,220,255,0.8);
-
-        cursor:
-            pointer;
-
-    }
-
-
-    .timeline-dates {
-
-        display:
-            flex;
-
-        justify-content:
-            space-between;
-
-        margin-top:
-            5px;
-
-        font-size:
-            7px;
-
-        letter-spacing:
-            0.8px;
-
-        color:
-            rgba(160,220,235,0.34);
-
-    }
-
-
     @media (max-width: 600px) {
-
-        .universe-title {
-
-            font-size:
-                10px;
-
-            letter-spacing:
-                3px;
-
-        }
-
 
         .top-button {
 
             top:
-                54px;
+                55px;
 
             right:
                 14px;
@@ -3983,46 +2962,16 @@ style.textContent = `
         }
 
 
-        .legend {
-
-            bottom:
-                110px;
-
-            left:
-                12px;
-
-        }
-
-
         .tutorial-button {
 
             right:
-                12px;
+                14px;
 
             bottom:
-                66px;
+                65px;
 
             max-width:
-                185px;
-
-        }
-
-
-        .timeline-ui {
-
-            width:
-                88vw;
-
-            bottom:
-                12px;
-
-        }
-
-
-        .timeline-dates {
-
-            font-size:
-                6px;
+                190px;
 
         }
 
@@ -4037,14 +2986,234 @@ document.head.appendChild(
 
 
 /* =========================================================
-   40. INITIAL STATE
+   30. TITLE
    ========================================================= */
 
-updateMemoryTimeline();
+const title =
+    document.createElement(
+        'div'
+    );
+
+
+title.textContent =
+    'OUR UNIVERSE';
+
+
+title.style.position =
+    'fixed';
+
+
+title.style.top =
+    '22px';
+
+
+title.style.left =
+    '50%';
+
+
+title.style.transform =
+    'translateX(-50%)';
+
+
+title.style.zIndex =
+    '15';
+
+
+title.style.pointerEvents =
+    'none';
+
+
+title.style.fontSize =
+    '13px';
+
+
+title.style.letterSpacing =
+    '5px';
+
+
+title.style.color =
+    'rgba(210,240,248,0.72)';
+
+
+document.body.appendChild(
+    title
+);
 
 
 /* =========================================================
-   41. ANIMATION LOOP
+   31. LEGEND
+   ========================================================= */
+
+const legend =
+    document.createElement(
+        'div'
+    );
+
+
+legend.innerHTML = `
+
+    <div>
+        <span class="legend-yellow"></span>
+        Devam + Arsh
+    </div>
+
+    <div>
+        <span class="legend-blue"></span>
+        memories
+    </div>
+
+    <div>
+        <span class="legend-faint"></span>
+        universe
+
+    </div>
+
+`;
+
+
+legend.style.position =
+    'fixed';
+
+
+legend.style.left =
+    '18px';
+
+
+legend.style.bottom =
+    '72px';
+
+
+legend.style.zIndex =
+    '15';
+
+
+legend.style.pointerEvents =
+    'none';
+
+
+legend.style.fontSize =
+    '10px';
+
+
+legend.style.lineHeight =
+    '1.9';
+
+
+legend.style.color =
+    'rgba(190,230,240,0.55)';
+
+
+document.body.appendChild(
+    legend
+);
+
+
+/* =========================================================
+   32. LEGEND STYLES
+   ========================================================= */
+
+const legendStyle =
+    document.createElement(
+        'style'
+    );
+
+
+legendStyle.textContent = `
+
+    .legend-yellow {
+
+        display:
+            inline-block;
+
+        width:
+            8px;
+
+        height:
+            8px;
+
+        margin-right:
+            7px;
+
+        border-radius:
+            50%;
+
+        background:
+            #ffe47a;
+
+        box-shadow:
+            0 0 9px
+            rgba(255,215,70,0.95);
+
+    }
+
+
+    .legend-blue {
+
+        display:
+            inline-block;
+
+        width:
+            7px;
+
+        height:
+            7px;
+
+        margin-right:
+            7px;
+
+        border-radius:
+            50%;
+
+        background:
+            #a8efff;
+
+        box-shadow:
+            0 0 8px
+            rgba(60,220,255,0.9);
+
+    }
+
+
+    .legend-faint {
+
+        display:
+            inline-block;
+
+        width:
+            5px;
+
+        height:
+            5px;
+
+        margin-right:
+            7px;
+
+        border-radius:
+            50%;
+
+        background:
+            #83b8ca;
+
+    }
+
+`;
+
+
+document.head.appendChild(
+    legendStyle
+);
+
+
+/* =========================================================
+   33. CLOCK
+   ========================================================= */
+
+const clock =
+    new THREE.Clock();
+
+
+/* =========================================================
+   34. MAIN ANIMATION LOOP
    ========================================================= */
 
 function animate(
@@ -4071,9 +3240,7 @@ function animate(
     );
 
 
-    animateConnection(
-        time
-    );
+    animateConnection();
 
 
     controls.update();
@@ -4093,7 +3260,7 @@ animate(
 
 
 /* =========================================================
-   42. RESIZE
+   35. RESIZE
    ========================================================= */
 
 window.addEventListener(
@@ -4122,8 +3289,6 @@ window.addEventListener(
 );
 
 
-/*
-=========================================================
-STAGE 8 COMPLETE
-=========================================================
-*/
+/* =========================================================
+   DONE
+   ========================================================= */
