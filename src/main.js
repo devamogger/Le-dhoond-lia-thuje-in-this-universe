@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+console.log("NEW LIVING UNIVERSE BUILD — SEPTEMBER 2026");
+
 /* =========================================================
    OUR UNIVERSE
    Main Universe Renderer
